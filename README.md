@@ -25,10 +25,12 @@
 
 | 종류 | 수록량 | 출처 |
 | --- | --- | --- |
-| 한자 | **500자** (한국어문회 배정한자 8급~5급) · 훈·음·부수·총획·급수·낱말 3~4개 | 훈·음·급수·부수: 한국어문회 배정한자 자료([rycont/hanja-grade-dataset](https://github.com/rycont/hanja-grade-dataset)) · 총획: Unicode Unihan · 부수 이름·낱말 예시: 직접 정리 |
-| 영어 | **516개** 초등~중학 필수 어휘 · 한국어 뜻 + 영영 뜻 + 예문/해석 | 직접 정리 |
-| 국어 | **207개** 낱말(동음이의어 포함) · 뜻·예문·비슷한 말/반대말·한자 표기 | 직접 정리 |
+| 한자 | **1,000자** (한국어문회 배정한자 8급~4급) · 훈·음·부수·총획·급수·낱말 3~4개 | 훈·음·급수·부수: 한국어문회 배정한자 자료([rycont/hanja-grade-dataset](https://github.com/rycont/hanja-grade-dataset)) · 총획: Unicode Unihan · 낱말 예시: 한국어기초사전·우리말샘 한자어(CC BY-SA 2.0 KR) · 부수 이름: 직접 정리 |
+| 영어 | **1,776개** 초등~중학 필수 어휘 · 한국어 뜻 + 영영 뜻 + 예문/해석 + 발음기호 | 직접 정리 · 발음기호는 [ipa-dict](https://github.com/open-dict-data/ipa-dict)(MIT, 미국식) |
+| 국어 | **2,574개** — 낱말 2,257 · 속담 240 · 사자성어 77 · 뜻·예문·한자 표기 | 뜻·예문: 국립국어원 [한국어기초사전](https://krdict.korean.go.kr/) (CC BY-SA 2.0 KR) 및 직접 정리 |
 | 실시간 | 영어 영영 사전, 국어 위키낱말사전 | [Free Dictionary API](https://dictionaryapi.dev/) · [위키낱말사전](https://ko.wiktionary.org/) (CC BY-SA 4.0) |
+
+한국어기초사전 데이터는 국립국어원이 CC BY-SA 2.0 KR로 배포하는 자료를 가공해 담았습니다.
 
 ## 개인정보
 
@@ -42,9 +44,9 @@
 index.html            화면
 css/style.css         디자인
 js/app.js             검색·단어장·복습
-js/data-hanja.js      한자 500자
-js/data-en.js         영어 516개
-js/data-ko.js         국어 207개
+js/data-hanja.js      한자 1,000자
+js/data-en.js         영어 1,776개
+js/data-ko.js         국어 2,574개(낱말·속담·사자성어)
 fonts/                Pretendard(본문) · DictHanja(한자, Noto Serif CJK KR 서브셋)
 icons/                앱 아이콘 192 · 512 · maskable
 manifest.webmanifest  PWA 설정 (start_url "./", display "standalone", scope "./")

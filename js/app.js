@@ -12,7 +12,7 @@
   var EN_WORDS = (window.EN_WORDS || []).map(function (a) {
     var ex = a[4] || [];
     if (ex.length && typeof ex[0] === "string") ex = [ex];  // [예문, 해석] 한 쌍도 받아들임
-    return { w: a[0], p: a[1], ko: a[2] || [], defs: a[3] || [], ex: ex };
+    return { w: a[0], p: a[1], ko: a[2] || [], defs: a[3] || [], ex: ex, ph: a[5] || "" };
   });
   var KO_WORDS = (window.KO_WORDS || []).map(function (a) {
     return { w: a[0], p: a[1], def: a[2], ex: a[3], syn: a[4] || [], ant: a[5] || [], h: a[6] || "", kind: a[7] || "word" };
