@@ -831,7 +831,7 @@
         } else {
           enInner = '<div class="empty">영어 사전에서 <b>' + escapeHtml(q) + "</b>을(를) 찾지 못했어요.<br>철자를 다시 확인해 보세요.</div>";
         }
-      } else if (state.liveEnState === "failed" && enList.length) {
+      } else if (state.liveEnState === "failed" && enList.length && !enList[0].defs.length) {
         enInner += '<div class="live-status" style="padding-left:4px">실시간 영영 사전에 연결하지 못해 내장 사전으로 보여주고 있어요.</div>';
       }
       var enCount = enList.length + (liveIsNew ? 1 : 0);
