@@ -258,28 +258,28 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round
 .page {
   max-width: 1060px;
   margin: 0 auto;
-  padding: 26px 22px 64px;
+  padding: 20px 22px 64px;
 }
 
 .view { animation: rise .28s ease both; }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 /* Home */
-.hello { padding: 6px 2px 26px; }
+.hello { padding: 2px 2px 18px; }
 .hello h2 {
-  font-size: clamp(26px, 4.4vw, 36px);
+  font-size: clamp(24px, 3.5vw, 30px);
   font-weight: 850;
-  line-height: 1.28;
+  line-height: 1.26;
   letter-spacing: -0.035em;
 }
-.hello p { margin-top: 9px; color: var(--ink-2); font-size: 15.5px; font-weight: 480; }
+.hello p { margin-top: 7px; color: var(--ink-2); font-size: 15px; font-weight: 480; }
 .br-mobile { display: none; }
 
-.block { margin-bottom: 34px; }
+.block { margin-bottom: 24px; }
 
 .block-head {
   display: flex; align-items: baseline; justify-content: space-between;
-  gap: 12px; margin-bottom: 13px;
+  gap: 12px; margin-bottom: 11px;
 }
 .block-head h3 { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
 .block-sub { font-size: 13px; font-weight: 600; color: var(--ink-3); }
@@ -302,9 +302,9 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
-  min-height: 168px;
-  padding: 17px 18px 16px;
+  gap: 5px;
+  min-height: 172px;
+  padding: 15px 17px 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -340,21 +340,21 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round
   font-size: 27px; font-weight: 820; letter-spacing: -0.03em; line-height: 1.2;
   overflow-wrap: anywhere;
 }
-.today-word.hanja-big { font-family: var(--hanja-font); font-size: 52px; line-height: 2; font-weight: 500; padding: 0; }
+.today-word.hanja-big { font-family: var(--hanja-font); font-size: 46px; line-height: 1.5; font-weight: 500; padding: 0; }
 .today-meaning {
-  font-size: 14px; color: var(--ink-2); font-weight: 500; line-height: 1.45;
+  font-size: 14px; color: var(--ink-2); font-weight: 500; line-height: 1.42;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .today-arrow {
-  margin-top: auto; padding-top: 8px; font-size: 12.5px; font-weight: 700; color: var(--ink-3);
+  margin-top: auto; padding-top: 6px; font-size: 12.5px; font-weight: 700; color: var(--ink-3);
 }
 
 /* 오늘의 사자성어 · 속담 */
 .daily-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
 .daily-card {
   position: relative;
-  display: flex; flex-direction: column; align-items: flex-start; gap: 5px;
-  min-width: 0; padding: 18px 20px 16px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+  min-width: 0; padding: 15px 19px 13px;
   border: 1px solid var(--line); border-radius: var(--radius-lg);
   background: var(--surface); box-shadow: var(--shadow-sm);
   text-align: left;
@@ -370,7 +370,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round
   background: var(--tone-soft); color: var(--tone);
   font-size: 11.5px; font-weight: 800; letter-spacing: .01em;
 }
-.daily-word { font-size: 23px; font-weight: 820; letter-spacing: -0.03em; line-height: 1.28; color: var(--ink); }
+.daily-word { font-size: 22px; font-weight: 820; letter-spacing: -0.03em; line-height: 1.26; color: var(--ink); }
 .daily-hanja { font-size: 14px; letter-spacing: .12em; color: var(--ink-3); line-height: 1.4; }
 .daily-def {
   font-size: 14px; color: var(--ink-2); font-weight: 500; line-height: 1.5;
@@ -383,7 +383,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round
   max-width: 100%;
   display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
 }
-.daily-more { margin-top: auto; padding-top: 9px; font-size: 12.5px; font-weight: 750; color: var(--tone); }
+.daily-more { margin-top: auto; padding-top: 7px; font-size: 12.5px; font-weight: 750; color: var(--tone); }
 
 .daily-detail { margin-top: 13px; }
 .daily-detail .entry { margin-bottom: 0; }
@@ -996,24 +996,38 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round
 
 @media (max-width: 640px) {
   body { font-size: 16.5px; }
-  .head-inner { padding: 12px 16px 8px; }
+  .head-inner { padding: 10px 16px 7px; }
   .brand-icon { width: 38px; height: 38px; border-radius: 12px; }
   .brand-text h1 { font-size: 17.5px; }
   .brand-text p { font-size: 11.5px; }
-  .search-form { margin-top: 10px; }
+  .search-form { margin-top: 8px; }
   .search-box { padding-left: 13px; gap: 8px; border-radius: 16px; }
   .search-input { font-size: 17px; height: 44px; }
   .search-go { padding: 0 15px; height: 44px; font-size: 15px; }
   .tab { height: 40px; padding: 0 11px; font-size: 14px; gap: 5px; }
   .tabs { gap: 2px; }
-  .tabs { margin-top: 9px; }
+  .tabs { margin-top: 7px; }
   .tab .tab-count { display: none; }
 
-  .page { padding: 20px 16px 52px; }
-  .hello { padding: 4px 2px 22px; }
-  .hello h2 { font-size: 27px; }
-  .hello p { font-size: 14.5px; }
-  .br-mobile { display: block; }
+  .page { padding: 14px 16px 44px; }
+  .hello { padding: 2px 2px 12px; }
+  .hello h2 { font-size: 22px; }
+  .hello p { display: none; }
+  .br-mobile { display: none; }
+  .block { margin-bottom: 12px; }
+  .block-head { margin-bottom: 8px; }
+  .today-grid { gap: 8px; }
+  .today-card { padding: 8px 13px; gap: 1px 9px; }
+  .today-word { font-size: 20px; }
+  .today-word.hanja-big { font-size: 32px; line-height: 1.25; }
+  .today-card .today-meaning { font-size: 13px; -webkit-line-clamp: 1; }
+  .today-card .today-arrow { font-size: 11.5px; }
+  .daily-grid { gap: 8px; }
+  .daily-card { padding: 10px 14px 9px; gap: 3px; }
+  .daily-word { font-size: 20px; }
+  .daily-def { font-size: 13px; line-height: 1.4; }
+  .daily-when { font-size: 12px; padding: 4px 9px; }
+  .daily-more { padding-top: 5px; font-size: 12px; }
 
   .result-top { gap: 10px; padding-bottom: 18px; }
   .result-headline h2 { font-size: 19px; }
@@ -1030,9 +1044,9 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round
   .sense-means { font-size: 17px; }
   .def-list li { font-size: 15px; }
 
-  .daily-card { gap: 4px; }
+  .daily-card { gap: 3px; }
   .daily-word { font-size: 20px; }
-  .daily-def { font-size: 13.5px; }
+  .daily-def { font-size: 13px; }
   .story-entry.proverb .entry-word { font-size: 19.5px; }
   .hanja-cell { min-width: 58px; padding: 6px 8px 7px; }
   .hanja-cell b { font-size: 23px; }
