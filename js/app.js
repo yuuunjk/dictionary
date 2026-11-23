@@ -89,7 +89,7 @@
     });
   });
 
-  var GRADE_ORDER = ["8급", "7급Ⅱ", "7급", "6급Ⅱ", "6급", "5급Ⅱ", "5급", "4급Ⅱ", "4급"];
+  var GRADE_ORDER = ["8급", "7급Ⅱ", "7급", "6급Ⅱ", "6급", "5급Ⅱ", "5급", "4급Ⅱ", "4급", "3급Ⅱ", "3급"];
 
   /* ---------- DOM ---------- */
   var $ = function (sel, root) { return (root || document).querySelector(sel); };
