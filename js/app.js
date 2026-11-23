@@ -564,8 +564,9 @@
         defs.push({ pos: "", text: d });
       });
     }
-    // 내장 사전에 영영 뜻이 넉넉하면 실시간 사전 뜻은 덧붙이지 않습니다(중복·어려운 풀이 방지).
-    if (!entry || (entry.defs || []).length < 2) {
+    // 내장 사전에 있는 낱말은 내장 뜻·예문만 보여 줍니다.
+    // 실시간 사전은 내장에 없는 낱말을 찾을 때만 씁니다(어려운 풀이·번역 없는 예문 방지).
+    if (!entry || !(entry.defs || []).length) {
       liveDefs.forEach(function (d) {
         var key = squash(d.text).slice(0, 40);
         if (seenDef[key]) return;
@@ -578,7 +579,7 @@
     if (entry && entry.ex) {
       entry.ex.forEach(function (pair) { examples.push({ en: pair[0], ko: pair[1] || "" }); });
     }
-    if (!entry || (entry.ex || []).length < 2) {
+    if (!entry || !(entry.ex || []).length) {
       (live && live.examples ? live.examples : []).forEach(function (ex) {
         var dup = examples.some(function (e2) { return squash(e2.en) === squash(ex.en); });
         if (!dup) examples.push(ex);
