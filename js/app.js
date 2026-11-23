@@ -12,7 +12,22 @@
   var EN_WORDS = (window.EN_WORDS || []).map(function (a) {
     var ex = a[4] || [];
     if (ex.length && typeof ex[0] === "string") ex = [ex];  // [예문, 해석] 한 쌍도 받아들임
-    return { w: a[0], p: a[1], ko: a[2] || [], defs: a[3] || [], ex: ex, ph: a[5] || "" };
+    // 한국어 뜻은 품사별 묶음 [['명사', ['재미', ...]], ...]. 예전 데이터(['뜻', ...])도 받아들입니다.
+    var senses = [];
+    var rawKo = a[2] || [];
+    if (rawKo.length && typeof rawKo[0] !== "string") {
+      rawKo.forEach(function (g) {
+        if (!g || !g[0] || !g[1] || !g[1].length) return;
+        senses.push({ pos: String(g[0]), means: g[1].map(String) });
+      });
+    } else {
+      senses.push({ pos: a[1] || "", means: rawKo.map(String) });
+    }
+    var flat = [];
+    senses.forEach(function (s) {
+      s.means.forEach(function (m) { if (flat.indexOf(m) === -1) flat.push(m); });
+    });
+    return { w: a[0], p: a[1], senses: senses, ko: flat, defs: a[3] || [], ex: ex, ph: a[5] || "" };
   });
   var KO_WORDS = (window.KO_WORDS || []).map(function (a) {
     return { w: a[0], p: a[1], def: a[2], ex: a[3], syn: a[4] || [], ant: a[5] || [], h: a[6] || "", kind: a[7] || "word" };
@@ -568,7 +583,13 @@
     var phonetic = (live && live.phonetic) || (entry && entry.ph) || "";
     var audio = (live && live.audio) || "";
 
-    var savedSub = (pos ? pos + " · " : "") + (koMeanings.length ? koMeanings.join(", ") : firstSentence(defs.length ? defs[0].text : "", 48));
+    var senses = (entry && entry.senses && entry.senses.length) ? entry.senses : [{ pos: pos, means: koMeanings }];
+    var subMeans = [];
+    senses.forEach(function (s) {
+      if (!s.means.length) return;
+      subMeans.push((s.pos ? s.pos + " " : "") + s.means.slice(0, 3).join(", "));
+    });
+    var savedSub = subMeans.join(" / ") || firstSentence(defs.length ? defs[0].text : "", 48);
 
     var html = '<article class="entry">';
     html += '<div class="entry-top"><div class="entry-title-wrap">';
@@ -586,8 +607,12 @@
 
     if (koMeanings.length) {
       html += '<div class="field"><div class="field-label">한국어 뜻 <span class="ko-only">Korean</span></div><div class="field-body ko-meanings">';
-      koMeanings.forEach(function (m) {
-        html += '<div class="m">' + (pos ? "<em>" + escapeHtml(pos) + "</em>" : "") + escapeHtml(m) + "</div>";
+      senses.forEach(function (s) {
+        if (!s.means.length) return;
+        html += '<div class="sense">' +
+          (s.pos ? '<span class="sense-pos">' + escapeHtml(s.pos) + "</span>" : "") +
+          '<span class="sense-means">' + s.means.map(escapeHtml).join('<span class="sense-sep">·</span>') + "</span>" +
+          "</div>";
       });
       html += "</div></div>";
     } else if (!entry) {
@@ -596,7 +621,7 @@
 
     if (defs.length) {
       html += '<div class="field"><div class="field-label">영영 뜻 <span class="ko-only">English definition</span></div><ul class="def-list">';
-      defs.slice(0, 3).forEach(function (d, i) {
+      defs.slice(0, 4).forEach(function (d, i) {
         html += '<li><span class="num">' + (i + 1) + "</span><span>" + escapeHtml(d.text) + "</span></li>";
       });
       html += "</ul></div>";
@@ -604,7 +629,7 @@
 
     if (examples.length) {
       html += '<div class="field"><div class="field-label">예문 <span class="ko-only">Examples</span></div><div class="examples">';
-      examples.slice(0, 3).forEach(function (ex) {
+      examples.slice(0, 4).forEach(function (ex) {
         html += '<div class="example"><div class="ex-en">' + escapeHtml(ex.en) + "</div>" +
           (ex.ko ? '<div class="ex-ko">' + escapeHtml(ex.ko) + "</div>" : "") + "</div>";
       });
@@ -895,7 +920,7 @@
       cards.push('<button class="today-card en" type="button" data-search="' + escapeHtml(en.w) + '" data-tab="en">' +
         '<span class="today-type en">영어</span>' +
         '<span class="today-word">' + escapeHtml(en.w) + "</span>" +
-        '<span class="today-meaning">' + escapeHtml((en.ko || []).join(", ")) + "</span>" +
+        '<span class="today-meaning">' + escapeHtml((en.ko || []).slice(0, 3).join(", ")) + "</span>" +
         '<span class="today-arrow">뜻 보기 →</span></button>');
     }
     if (hanja) {
