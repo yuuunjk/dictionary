@@ -30,10 +30,26 @@
     return { w: a[0], p: a[1], senses: senses, ko: flat, defs: a[3] || [], ex: ex, ph: a[5] || "" };
   });
   var KO_WORDS = (window.KO_WORDS || []).map(function (a) {
-    return { w: a[0], p: a[1], def: a[2], ex: a[3], syn: a[4] || [], ant: a[5] || [], h: a[6] || "", kind: a[7] || "word" };
+    return {
+      w: a[0], p: a[1], def: a[2], ex: a[3], syn: a[4] || [], ant: a[5] || [],
+      h: a[6] || "", kind: a[7] || "word", origin: a[8] || "", usage: a[9] || ""
+    };
   });
 
   var TYPE_LABEL = { ko: "국어", en: "영어", hanja: "한자" };
+
+  var IDIOMS = KO_WORDS.filter(function (e) { return e.kind === "idiom"; });
+  var PROVERBS = KO_WORDS.filter(function (e) { return e.kind === "proverb"; });
+  var KIND_LABEL = { idiom: "사자성어", proverb: "속담" };
+
+  // 사자성어에 쓰인 글자 중 한자 사전(1,817자)에 없는 글자의 훈·음
+  var HUN_FALLBACK = {
+    "晚": ["늦을", "만"], "楚": ["초나라", "초"], "兎": ["토끼", "토"], "杖": ["몽둥이", "장"],
+    "藍": ["쪽", "람"], "顚": ["넘어질", "전"], "睛": ["눈동자", "정"], "眈": ["노려볼", "탐"],
+    "匙": ["숟가락", "시"], "薪": ["섶나무", "신"], "膽": ["쓸개", "담"], "兢": ["삼갈", "긍"],
+    "棒": ["막대기", "봉"], "焦": ["탈", "초"], "刮": ["긁을", "괄"], "烹": ["삶을", "팽"],
+    "狐": ["여우", "호"], "捲": ["말", "권"], "蜚": ["날", "비"]
+  };
 
   /* ---------- 저장소 ---------- */
   var KEY_RECENT = "luka-dict-recent-v1";
@@ -113,6 +129,9 @@
     startReview: $("#startReview"),
     todayGrid: $("#todayGrid"),
     todayDate: $("#todayDate"),
+    dailyGrid: $("#dailyGrid"),
+    dailyDate: $("#dailyDate"),
+    dailyDetail: $("#dailyDetail"),
     recentBlock: $("#recentBlock"),
     recentChips: $("#recentChips"),
     clearRecent: $("#clearRecent"),
@@ -139,7 +158,8 @@
     liveKoState: "idle",
     liveEnState: "idle",
     seq: 0,
-    view: "home"
+    view: "home",
+    dailyOpen: ""
   };
 
   var liveCache = Object.create(null);
@@ -646,8 +666,83 @@
     return html;
   }
 
+  /* ---------- 렌더: 사자성어 · 속담 카드 ---------- */
+  function hanjaCells(h) {
+    var out = "";
+    for (var i = 0; i < h.length; i++) {
+      var c = h[i];
+      if (!isCJK(c)) continue;
+      var hit = hanjaByChar[c];
+      var hun = "", eum = "";
+      if (hit) { hun = hit.h || ""; eum = hit.e || ""; }
+      else if (HUN_FALLBACK[c]) { hun = HUN_FALLBACK[c][0]; eum = HUN_FALLBACK[c][1]; }
+      var reading = hun && eum ? hun + " " + eum : (hun || eum);
+      out += '<span class="hanja-cell"><b>' + escapeHtml(c) + "</b>" +
+        (reading ? '<em>' + escapeHtml(reading) + "</em>" : "") + "</span>";
+    }
+    return out;
+  }
+
+  function renderStoryEntry(entry) {
+    var isIdiom = entry.kind === "idiom";
+    var kindLabel = KIND_LABEL[entry.kind] || "";
+    var sub = kindLabel + " · " + firstSentence(entry.def, 52);
+
+    var html = '<article class="entry story-entry ' + entry.kind + '">';
+    html += '<div class="entry-top"><div class="entry-title-wrap">';
+    html += '<div class="entry-word">' + escapeHtml(entry.w) +
+      '<span class="kind-tag ' + entry.kind + '">' + kindLabel + "</span></div>";
+    html += '<div class="sub-meta">';
+    html += '<button class="icon-btn speak-btn speak-sm ko-speak" type="button" data-speak="' + escapeHtml(entry.w) + '" data-lang="ko" data-audio="" aria-label="' + escapeHtml(entry.w) + ' 읽어 주기">' + icon("wave") + "</button>";
+    if (isIdiom && entry.h) {
+      html += '<span class="hanja-origin">한자 <span class="hanja-mini">' + escapeHtml(entry.h) + "</span></span>";
+    }
+    html += "</div></div>";
+    html += starButton("ko", entry.w, entry.w, sub, entry.w);
+    html += "</div>";
+
+    if (entry.def) {
+      html += '<div class="field"><div class="field-label">뜻</div><div class="field-body">' + escapeHtml(entry.def) + "</div></div>";
+    }
+
+    if (isIdiom && entry.h) {
+      html += '<div class="field"><div class="field-label">한자 풀이 <span class="ko-only">한 글자씩</span></div>' +
+        '<div class="hanja-cells">' + hanjaCells(entry.h) + "</div></div>";
+    }
+
+    if (entry.origin) {
+      html += '<div class="field"><div class="field-label">유래</div><div class="field-body story-body">' + escapeHtml(entry.origin) + "</div></div>";
+    }
+
+    if (entry.usage) {
+      html += '<div class="field"><div class="field-label">이럴 때 써요</div><div class="field-body story-body when-body">' + escapeHtml(entry.usage) + "</div></div>";
+    }
+
+    if (entry.ex) {
+      html += '<div class="field"><div class="field-label">예문</div><div class="examples"><div class="example">' +
+        '<div class="ex-en" style="font-size:15.5px">' + escapeHtml(entry.ex) + "</div></div></div></div>";
+    }
+
+    if ((entry.syn && entry.syn.length) || (entry.ant && entry.ant.length)) {
+      html += '<div class="field"><div class="field-label">비슷한 말 · 반대말</div><div class="tag-row">';
+      if (entry.syn && entry.syn.length) {
+        html += '<span class="tag-label">비슷한 말</span>';
+        entry.syn.forEach(function (s) { html += '<span class="tag syn">' + escapeHtml(s) + "</span>"; });
+      }
+      if (entry.ant && entry.ant.length) {
+        html += '<span class="tag-label" style="margin-left:6px">반대말</span>';
+        entry.ant.forEach(function (s) { html += '<span class="tag ant">' + escapeHtml(s) + "</span>"; });
+      }
+      html += "</div></div>";
+    }
+
+    html += "</article>";
+    return html;
+  }
+
   /* ---------- 렌더: 국어 카드 ---------- */
   function renderKoreanEntry(entry, live, liveState) {
+    if (entry && (entry.kind === "idiom" || entry.kind === "proverb")) return renderStoryEntry(entry);
     var word = entry ? entry.w : (live ? live.title : "");
     var pos = entry && entry.p ? entry.p : "";
     var def = entry ? entry.def : "";
@@ -772,7 +867,8 @@
     var enResults = tab === "all" || tab === "en" ? searchEnglish(q) : [];
     var hanjaResults = tab === "all" || tab === "hanja" ? searchHanja(q) : [];
 
-    var wantKoLive = (tab === "all" || tab === "ko") && isHangulQuery(q) && q.length <= 12;
+    var wantKoLive = (tab === "all" || tab === "ko") && isHangulQuery(q) && q.length <= 12 &&
+      !koResults.some(function (e) { return e.kind === "idiom" || e.kind === "proverb"; });
     var wantEnLive = (tab === "all" || tab === "en") && isLatinQuery(q);
     state.wantKo = wantKoLive;
     state.wantEn = wantEnLive;
@@ -906,6 +1002,75 @@
 
   var WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
+  function hashStr(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+    return h;
+  }
+
+  // 날짜가 바뀌면 다음 날에는 다른 사자성어·속담이 나옵니다.
+  function pickDaily(list, salt) {
+    if (!list.length) return null;
+    var d = new Date();
+    var key = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    return list[(hashStr(key) + salt * 97) % list.length];
+  }
+
+  function shortUsage(text) {
+    var t = String(text || "");
+    var cut = t.split("때처럼")[0];
+    if (cut !== t && cut.length > 8) t = cut + "때";
+    var first = t.split(/(?<=[.!?])\s/)[0] || t;
+    return first;
+  }
+
+  function dailyCardMarkup(entry) {
+    if (!entry) return "";
+    var isIdiom = entry.kind === "idiom";
+    return '<button class="daily-card ' + entry.kind + '" type="button" data-daily="' + escapeHtml(entry.w) + '" aria-expanded="false">' +
+      '<span class="daily-kind ' + entry.kind + '">' + (KIND_LABEL[entry.kind] || "") + "</span>" +
+      '<span class="daily-word">' + escapeHtml(entry.w) + "</span>" +
+      (isIdiom && entry.h ? '<span class="daily-hanja hanja-mini">' + escapeHtml(entry.h) + "</span>" : "") +
+      '<span class="daily-def">' + escapeHtml(firstSentence(entry.def, 70)) + "</span>" +
+      '<span class="daily-when">' + escapeHtml(shortUsage(entry.usage)) + "</span>" +
+      '<span class="daily-more">유래 · 예문 보기 →</span></button>';
+  }
+
+  function renderDaily() {
+    if (!el.dailyGrid) return;
+    var idiom = pickDaily(IDIOMS, 1);
+    var proverb = pickDaily(PROVERBS, 2);
+    var cards = dailyCardMarkup(idiom) + dailyCardMarkup(proverb);
+    el.dailyGrid.innerHTML = cards || '<div class="empty">오늘의 사자성어를 준비하고 있어요.</div>';
+    if (el.dailyDate) el.dailyDate.textContent = el.todayDate ? el.todayDate.textContent : "";
+    closeDaily();
+  }
+
+  function openDaily(word) {
+    var entry = null;
+    KO_WORDS.forEach(function (e) { if (!entry && e.w === word && (e.kind === "idiom" || e.kind === "proverb")) entry = e; });
+    if (!entry || !el.dailyDetail) return;
+    el.dailyDetail.innerHTML = '<div class="daily-detail-inner">' + renderStoryEntry(entry) +
+      '<button class="daily-close" type="button" data-daily-close="1">접기</button></div>';
+    el.dailyDetail.hidden = false;
+    state.dailyOpen = word;
+    $$("[data-daily]", el.dailyGrid).forEach(function (b) {
+      b.setAttribute("aria-expanded", b.getAttribute("data-daily") === word ? "true" : "false");
+      b.classList.toggle("is-open", b.getAttribute("data-daily") === word);
+    });
+  }
+
+  function closeDaily() {
+    state.dailyOpen = "";
+    if (!el.dailyDetail) return;
+    el.dailyDetail.hidden = true;
+    el.dailyDetail.innerHTML = "";
+    $$("[data-daily]", el.dailyGrid).forEach(function (b) {
+      b.setAttribute("aria-expanded", "false");
+      b.classList.remove("is-open");
+    });
+  }
+
   function renderHome() {
     var d = new Date();
     el.todayDate.textContent = (d.getMonth() + 1) + "월 " + d.getDate() + "일 " + WEEKDAYS[d.getDay()] + "요일";
@@ -938,6 +1103,7 @@
     }
     el.todayGrid.innerHTML = cards.join("");
 
+    renderDaily();
     renderRecent();
     renderBookHome();
   }
@@ -1192,6 +1358,19 @@
       var tab = searchBtn.getAttribute("data-tab");
       if (tab) setTab(tab); else if (state.tab === "book") setTab("all");
       runSearch(q);
+      return;
+    }
+
+    if (e.target.closest("[data-daily-close]")) {
+      closeDaily();
+      return;
+    }
+
+    var dailyBtn = e.target.closest("[data-daily]");
+    if (dailyBtn) {
+      var dailyWord = dailyBtn.getAttribute("data-daily");
+      if (state.dailyOpen === dailyWord) closeDaily();
+      else openDaily(dailyWord);
       return;
     }
   }
