@@ -1,7 +1,7 @@
 /* 루카 통합사전 — 오프라인 캐시 서비스 워커
    앱 화면·내장 데이터·글꼴·아이콘만 기기에 저장합니다.
    검색 기록과 단어장은 서비스 워커를 거치지 않고 브라우저 localStorage에만 남습니다. */
-const CACHE = 'luka-dict-v6';
+const CACHE = 'luka-dict-v7';
 const ASSETS = [
   './',
   './index.html',
@@ -18,8 +18,16 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // 캐시 버전을 올릴 때 브라우저 HTTP 캐시의 옛 파일을 쓰지 않도록
+  // cache: 'reload'로 서버에서 새로 받아 저장합니다.
   event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then((cache) => Promise.all(ASSETS.map((url) =>
+        fetch(new Request(url, { cache: 'reload' })).then((res) => {
+          if (res && res.status === 200) return cache.put(url, res);
+        })
+      )))
+      .then(() => self.skipWaiting())
   );
 });
 
