@@ -1,7 +1,7 @@
 /* 루카 통합사전 — 오프라인 캐시 서비스 워커
    앱 화면·내장 데이터·글꼴·아이콘만 기기에 저장합니다.
    검색 기록과 단어장은 서비스 워커를 거치지 않고 브라우저 localStorage에만 남습니다. */
-const CACHE = 'luka-dict-v5';
+const CACHE = 'luka-dict-v6';
 const ASSETS = [
   './',
   './index.html',
