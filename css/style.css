@@ -472,6 +472,7 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round
 .how h3 { font-size: 15px; font-weight: 800; margin-bottom: 10px; }
 .how-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
 .how-list li { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; display: flex; gap: 9px; align-items: baseline; }
+.how-text { flex: 1 1 auto; min-width: 0; }
 .how-list b { color: var(--ink); font-weight: 700; }
 .how-badge {
   flex: none; font-size: 11.5px; font-weight: 800; padding: 2px 8px; border-radius: 999px;
